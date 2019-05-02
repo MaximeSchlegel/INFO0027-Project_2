@@ -1,3 +1,5 @@
-public class FolderNode {
-    private String name;
+public class FolderNode extends Node {
+    public FolderNode(String name) {
+        super(name);
+    }
 }
