@@ -9,7 +9,7 @@ public class GuiHandler implements ExplorerEventsHandler {
         
         try {
         	// First step to do before anything !!! 
-            this.esv.setRootNode(new A(args[0])); // set the root node with a silly "A" object
+            this.esv.setRootNode(new FolderNode(args[0])); // set the root node with a silly "A" object
         } catch (RootAlreadySetException e) {
             e.printStackTrace();
         }
@@ -27,7 +27,6 @@ public class GuiHandler implements ExplorerEventsHandler {
 
 	@Override
 	public void createCopyEvent(Object selectedNode) {
-		this.esv.addNodeToParentNode();
 	}
 
 	@Override
