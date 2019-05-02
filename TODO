@@ -11,7 +11,8 @@ Alias => shortcut
 Copy => full copy
     file
     folder
-Add (copy) at the end => upgrade: add number
+- Add (copy) at the end => upgrade: add number
+- Recurtion if folder
 
 Compress
     folder
