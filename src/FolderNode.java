@@ -1,0 +1,2 @@
+public class FolderNode {
+}

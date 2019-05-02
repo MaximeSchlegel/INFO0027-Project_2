@@ -1,0 +1,33 @@
+TODO
+Create: => design pattern factory
+    file
+    folder
+- Ask name of the new file/folder
+
+Alias => shortcut
+    file
+    folder
+
+Copy => full copy
+    file
+    folder
+Add (copy) at the end => upgrade: add number
+
+Compress
+    folder
+
+Log activity
+
+
+
+Constrain
+    Can't add file to file
+    Can't add folder to file
+    Can't make an alias from an alias
+
+
+Class
+    file
+    folder
+    alias => design pattern ?
+    GUIHandler
