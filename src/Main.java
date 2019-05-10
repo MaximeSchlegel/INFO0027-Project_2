@@ -14,7 +14,6 @@ public class Main {
         System.out.println(node2);
 
 
-
         if (args.length > 1) {
             System.err.println("Max one argument is allowed");
             System.exit(1);
