@@ -7,21 +7,18 @@ import Visitor.VisitorArchive;
 public class ArchiveFactory implements NodeFactory {
     private String archiveName;
     private String archiveExtension;
-    private int compressoinRate;
+    private int compressionRate;
     private String archiveContent;
     private int copyNumber;
 
-    public ArchiveFactory(String name, String extension, int compressoinRate, FolderNode target) {
+    public ArchiveFactory(String name, String extension, int compressionRate, FolderNode target) {
         VisitorArchive visitor = new VisitorArchive(target);
 
         this.archiveName = name;
         this.archiveExtension = extension;
-        this.compressoinRate = compressoinRate;
+        this.compressionRate = compressionRate;
         this.archiveContent = visitor.getResult();
         this.copyNumber = 0;
-
-        System.out.println(this.archiveName + this.archiveExtension);
-        System.out.println(this.archiveContent);
     }
 
     @Override
@@ -29,9 +26,9 @@ public class ArchiveFactory implements NodeFactory {
         ArchiveNode newArchive;
 
         if (this.copyNumber == 0) {
-            newArchive =new ArchiveNode(this.archiveName, this.archiveExtension, this.compressoinRate, this.archiveContent, this);
+            newArchive =new ArchiveNode(this.archiveName, this.archiveExtension, this.compressionRate, this.archiveContent, this);
         } else {
-            newArchive = new ArchiveNode(this.archiveName + "(copy_" + this.copyNumber + ")", this.archiveExtension, this.compressoinRate, this.archiveContent, this);
+            newArchive = new ArchiveNode(this.archiveName + "(copy_" + this.copyNumber + ")", this.archiveExtension, this.compressionRate, this.archiveContent, this);
         }
         this.copyNumber++;
 

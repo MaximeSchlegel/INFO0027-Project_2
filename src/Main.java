@@ -12,27 +12,36 @@ public class Main {
             System.exit(1);
         }
 
-        try {
-            EventSource eventSource = new EventSource();
-            if(args.length  == 0){
-                eventSource.addObserver(event -> {
-                    System.out.println("Received response: " + event);
-                });
-            }
-            else{
-                PrintWriter writer1 =null;
-                try {
-                    writer1 = new PrintWriter(new File("./log.txt"));
-                    PrintWriter finalWriter = writer1;
-                    eventSource.addObserver(event -> {
-                        finalWriter.write("Received response: " + event + "\n");
-                        finalWriter.flush();
+        EventSource eventSource = new EventSource();
+
+        if(args.length  == 0){
+            eventSource.addObserver(
+                    event -> {
+                        System.out.println(event);
                     });
-                }catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    return;
+        } else {
+            PrintWriter writer = null;
+
+            try {
+                writer = new PrintWriter(new File("./log.txt"));
+                PrintWriter finalWriter = writer;
+
+                eventSource.addObserver(
+                        event -> {
+                            finalWriter.write( event + "\n");
+                            finalWriter.flush();
+                        });
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return;
+            } finally {
+                if (writer != null) {
+                    writer.close();
                 }
             }
+        }
+        try {
             new GuiHandler(args, eventSource);
         } catch (NullHandlerException e) {
             e.printStackTrace();
