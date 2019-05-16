@@ -1,6 +1,11 @@
+import Factory.FileFactory;
+import Factory.FolderFactory;
+import Node.AliasNode;
+import Node.FileNode;
+import Node.FolderNode;
 import montefiore.ulg.ac.be.graphics.*;
 
-import java.util.Iterator;
+import java.io.File;
 
 public class GuiHandler implements ExplorerEventsHandler {
 
@@ -10,126 +15,200 @@ public class GuiHandler implements ExplorerEventsHandler {
         this.esv = new ExplorerSwingView(this);
         
         try {
-        	// First step to do before anything !!! /
-            this.esv.setRootNode(new FolderNode(args[0], null)); // set the root node with a silly "A" object
+            this.esv.setRootNode(new FolderNode("Root", null, null));
 			this.esv.refreshTree();
         } catch (RootAlreadySetException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	@Override
-	public void createAliasEvent(Object selectedNode) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void createArchiveEvent(Object selectedNode) {
-		// TODO Auto-generated method stub
-		if(selectedNode instanceof FolderNode){
-			esv.displayArchiveWindow1();
-			esv.displayArchiveWindow2();
-			esv.displayArchiveWindow3();
-		}else{
-			esv.showPopupError("the element selected isn't a folder");
-		}
-	}
-
-	@Override
-	public void createCopyEvent(Object selectedNode) {
-    	if(!esv.isRootNodeSelected()){
-    		System.out.println(selectedNode.getClass());
-    		if(selectedNode instanceof FileNode){
-    			FileNode mFileNode = (FileNode) selectedNode;
-    			FolderNode mParent = mFileNode.getParent();
-				try {
-					FileNode mFileNodeClone = (FileNode) mFileNode.clone();
-					esv.addNodeToParentNode(mFileNodeClone);
-					mParent.addFileNode(mFileNodeClone);
-					esv.refreshTree();
-				} catch (NoSelectedNodeException e) {
-					e.printStackTrace();
-				} catch (NoParentNodeException e) {
-					e.printStackTrace();
-				} catch (CloneNotSupportedException e) {
-					e.printStackTrace();
-				}
-			}else if(selectedNode instanceof FolderNode){
-				FolderNode mFolderNode = (FolderNode) selectedNode;
-				try {
-					FolderNode mFolderNodeClone = (FolderNode) mFolderNode.clone();
-					Iterator<FileNode> mFileNodes = mFolderNode.getmFileNodes().iterator();
-					Iterator<FolderNode> mFolderNodes = mFolderNode.getmFolderNodes().iterator();
-					esv.addNodeToParentNode(mFolderNodeClone);
-					while (mFileNodes.hasNext()){
-						esv.addNodeToLastInsertedNode(mFileNodes.next(), 1);
-					}
-					while (mFolderNodes.hasNext()){
-						FolderNode tmpFolder = mFolderNodes.next();
-						esv.addNodeToLastInsertedNode(tmpFolder, 1);
-						System.out.println(tmpFolder.getmFileNodes().size());
-						for (int i = 0; i < tmpFolder.getmFileNodes().size(); i++){
-							FileNode tmpFile = tmpFolder.getmFileNodes().get(i);
-							esv.addNodeToLastInsertedNode(tmpFile, 2);
-						}
-					}
-					esv.refreshTree();
-				} catch (NoSelectedNodeException e) {
-					e.printStackTrace();
-				} catch (NoParentNodeException e) {
-					e.printStackTrace();
-				} catch (CloneNotSupportedException e) {
-					e.printStackTrace();
-				} catch (NoPreviousInsertedNodeException e) {
-					e.printStackTrace();
-				} catch (LevelException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 
 	@Override
 	public void createFileEvent(Object selectedNode) {
-			if(selectedNode instanceof FolderNode || esv.isRootNodeSelected()){
-				String[] file = esv.fileMenuDialog();
-				FolderNode parent = (FolderNode) selectedNode;
-				FileNode mFileNode = new FileNode(file[0], parent);
-				FolderNode mFolderNode = (FolderNode)selectedNode;
-				try {
-					mFolderNode.addFileNode(mFileNode);
-					esv.addNodeToSelectedNode(mFileNode);
-					esv.refreshTree();
-				} catch (NoSelectedNodeException e) {
-					e.printStackTrace();
-				}
-				esv.refreshTree();
-			}else{
-				esv.showPopupError("You can't add file to file");
-			}
+		if (!(selectedNode instanceof FolderNode)) {
+			esv.showPopupError("Can not add a file to this element");
+			return;
+		}
+
+		FolderNode parent = (FolderNode) selectedNode;
+
+		String[] fileConfig = esv.fileMenuDialog();
+		String fileName = fileConfig[0];
+		String fileContent = fileConfig[1];
+
+		if (fileName.isEmpty()) {
+			esv.showPopupError("Can not create a file without a name");
+			return;
+		}
+
+		FileFactory factory = new FileFactory(fileName, fileContent);
+		FileNode newFile = factory.getNew(parent);
+
+		try {
+			esv.addNodeToSelectedNode(newFile);
+		} catch (NoSelectedNodeException e) {
+			e.printStackTrace();
+			return;
+		}
+		parent.addChild(newFile);
+		esv.refreshTree();
 	}
 
 	@Override
 	public void createFolderEvent(Object selectedNode) {
-
-		if(selectedNode instanceof FolderNode || esv.isRootNodeSelected()){
-			String fileName = esv.folderMenuDialog();
-			FolderNode mParent = (FolderNode)selectedNode;
-			FolderNode mFolderNode = new FolderNode(fileName, mParent);
-			FolderNode mFolderNodeSelected = (FolderNode)selectedNode;
-			try {
-				mFolderNodeSelected.addFolderNode(mFolderNode);
-				esv.addNodeToSelectedNode(mFolderNode);
-			} catch (NoSelectedNodeException e) {
-				e.printStackTrace();
-			}
-			esv.refreshTree();
-		}else{
-			esv.showPopupError("You can't add folder to file");
+		if (!(selectedNode instanceof FolderNode)) {
+			esv.showPopupError("Can not add a folder to this element");
+			return;
 		}
 
+		FolderNode parent = (FolderNode) selectedNode;
 
+		String folderName = esv.folderMenuDialog();
+
+		if (folderName.isEmpty()) {
+			esv.showPopupError("Can not create a file without a name");
+			return;
+		}
+
+		FolderFactory factory = new FolderFactory(folderName);
+		FolderNode newFolder = factory.getNew(parent);
+
+		try {
+			esv.addNodeToSelectedNode(newFolder);
+		} catch (NoSelectedNodeException e) {
+			e.printStackTrace();
+			return;
+		}
+		parent.addChild(newFolder);
+		esv.refreshTree();
 	}
+
+	@Override
+	public void createAliasEvent(Object selectedNode) {
+		if (esv.isRootNodeSelected()) {
+			esv.showPopupError("Can not create an alias of the root");
+			return;
+		}
+		if(!(selectedNode instanceof FileNode)) {
+			esv.showPopupError("Can not create an alias this element");
+			return;
+		}
+
+		FileNode target = (FileNode) selectedNode;
+		FolderNode parent = target.getParent();
+
+		AliasNode alias = new AliasNode(target);
+
+		try {
+			esv.addNodeToParentNode(alias);
+		} catch (NoSelectedNodeException e) {
+			e.printStackTrace();
+			return;
+		} catch (NoParentNodeException e) {
+			e.printStackTrace();
+			return;
+		}
+		parent.addChild(alias);
+		esv.refreshTree();
+	}
+
+	@Override
+	public void createCopyEvent(Object selectedNode) {
+		if(esv.isRootNodeSelected()) {
+			esv.showPopupError("Can not copy the root");
+			return;
+		}
+		if (selectedNode instanceof AliasNode) {
+			esv.showPopupError("Can not copy an alias");
+			return;
+		}
+
+		System.out.println(selectedNode.getClass());
+
+//		if (selectedNode instanceof Node.FileNode) {
+//			Node.FileNode mFileNode = (Node.FileNode) selectedNode;
+//			Node.FolderNode mParent = mFileNode.getParent();
+//			try {
+//				Node.FileNode mFileNodeClone = (Node.FileNode) mFileNode.clone();
+//				esv.addNodeToParentNode(mFileNodeClone);
+//				mParent.addFileNode(mFileNodeClone);
+//				esv.refreshTree();
+//			} catch (NoSelectedNodeException e) {
+//				e.printStackTrace();
+//			} catch (NoParentNodeException e) {
+//				e.printStackTrace();
+//			} catch (CloneNotSupportedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//
+//		if(selectedNode instanceof Node.FolderNode){
+//			Node.FolderNode mFolderNode = (Node.FolderNode) selectedNode;
+//			try {
+//				Node.FolderNode mFolderNodeClone = (Node.FolderNode) mFolderNode.clone();
+//				Iterator<Node.FileNode> mFileNodes = mFolderNode.getmFileNodes().iterator();
+//				Iterator<Node.FolderNode> mFolderNodes = mFolderNode.getmFolderNodes().iterator();
+//				esv.addNodeToParentNode(mFolderNodeClone);
+//				while (mFileNodes.hasNext()){
+//					esv.addNodeToLastInsertedNode(mFileNodes.next(), 1);
+//				}
+//				while (mFolderNodes.hasNext()){
+//					Node.FolderNode tmpFolder = mFolderNodes.next();
+//					esv.addNodeToLastInsertedNode(tmpFolder, 1);
+//					System.out.println(tmpFolder.getmFileNodes().size());
+//					for (int i = 0; i < tmpFolder.getmFileNodes().size(); i++){
+//						Node.FileNode tmpFile = tmpFolder.getmFileNodes().get(i);
+//						esv.addNodeToLastInsertedNode(tmpFile, 2);
+//					}
+//				}
+//				esv.refreshTree();
+//			} catch (NoSelectedNodeException e) {
+//				e.printStackTrace();
+//			} catch (NoParentNodeException e) {
+//				e.printStackTrace();
+//			} catch (CloneNotSupportedException e) {
+//				e.printStackTrace();
+//			} catch (NoPreviousInsertedNodeException e) {
+//				e.printStackTrace();
+//			} catch (LevelException e) {
+//				e.printStackTrace();
+//			}
+//		}
+	}
+
+	@Override
+	public void createArchiveEvent(Object selectedNode) {
+    	if (esv.isRootNodeSelected()) {
+    		esv.showPopupError("Can not compress the root");
+    		return;
+		}
+
+    	if (!(selectedNode instanceof  FolderNode)) {
+			esv.showPopupError("Can not compress this element");
+			return;
+		}
+
+    	String archiveName = esv.displayArchiveWindow1();
+		String extension = esv.displayArchiveWindow2();
+		int compressionLevel = esv.displayArchiveWindow3();
+
+		System.out.println(archiveName + extension + " : " + compressionLevel);
+
+		if (archiveName == null) {
+			esv.showPopupError("Can not create the archive : Invalid name");
+			return;
+		}
+		if (extension == null) {
+			esv.showPopupError("Can not create the archive : Invalid extension");
+			return;
+		}
+		if (compressionLevel == -1) {
+			esv.showPopupError("Can not create the archive : Invalid compression level");
+			return;
+		}
+
+		System.out.println("OK");
+		//TODO:: add compress node
+    }
 
 	@Override
 	public void doubleClickEvent(Object selectedNode) {
