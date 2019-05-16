@@ -2,14 +2,15 @@ package Node;
 
 import Factory.FolderFactory;
 import Factory.NodeFactory;
+import Visitor.Visitor;
 
 import java.util.ArrayList;
 
 public class FolderNode extends Node {
     private ArrayList<Node> children;
 
-    public FolderNode(String name, FolderNode parent, FolderFactory factory) {
-        super(name, parent, factory);
+    public FolderNode(String name, FolderFactory factory) {
+        super(name, factory);
         this.children = new ArrayList<>();
     }
 
@@ -21,4 +22,8 @@ public class FolderNode extends Node {
         this.children.add(child);
     }
 
+    @Override
+    public void acceptVisitor(Visitor visitor) {
+        visitor.visitFolderNode(this);
+    }
 }

@@ -15,13 +15,13 @@ public class FileFactory implements NodeFactory {
         this.copyNumber = 0;
     }
 
-    public FileNode getNew(FolderNode parent) {
+    public FileNode getNew() {
         FileNode newFolder;
 
         if (this.copyNumber == 0) {
-            newFolder = new FileNode(this.fileName, this.fileContent, parent, this);
+            newFolder = new FileNode(this.fileName, this.fileContent, this);
         } else {
-            newFolder = new FileNode(this.fileName + "(copy_" + this.copyNumber + ")", this.fileContent, parent, this);
+            newFolder = new FileNode(this.fileName + "(copy_" + this.copyNumber + ")", this.fileContent,this);
         }
         this.copyNumber++;
 

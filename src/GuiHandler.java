@@ -17,7 +17,7 @@ public class GuiHandler implements ExplorerEventsHandler {
         this.esv = new ExplorerSwingView(this);
 		this.eventSource = eventSource;
         try {
-            this.esv.setRootNode(new FolderNode("Root", null, null));
+            this.esv.setRootNode(new FolderNode("Root", null));
 			this.esv.refreshTree();
         } catch (RootAlreadySetException e) {
 			e.printStackTrace();
@@ -43,7 +43,8 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 
 		FileFactory factory = new FileFactory(fileName, fileContent);
-		FileNode newFile = factory.getNew(parent);
+		FileNode newFile = factory.getNew();
+		newFile.setParent(parent);
 
 		try {
 			esv.addNodeToSelectedNode(newFile);
@@ -73,7 +74,8 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 
 		FolderFactory factory = new FolderFactory(folderName);
-		FolderNode newFolder = factory.getNew(parent);
+		FolderNode newFolder = factory.getNew();
+		newFolder.setParent(parent);
 
 		try {
 			esv.addNodeToSelectedNode(newFolder);
@@ -99,10 +101,11 @@ public class GuiHandler implements ExplorerEventsHandler {
 		FileNode target = (FileNode) selectedNode;
 		FolderNode parent = target.getParent();
 
-		AliasNode alias = new AliasNode(target);
+		AliasNode newAlias = new AliasNode(target);
+		newAlias.setParent(parent);
 
 		try {
-			esv.addNodeToParentNode(alias);
+			esv.addNodeToParentNode(newAlias);
 		} catch (NoSelectedNodeException e) {
 			e.printStackTrace();
 			return;
@@ -110,8 +113,43 @@ public class GuiHandler implements ExplorerEventsHandler {
 			e.printStackTrace();
 			return;
 		}
-		parent.addChild(alias);
+		parent.addChild(newAlias);
 		esv.refreshTree();
+	}
+
+	@Override
+	public void createArchiveEvent(Object selectedNode) {
+		if (esv.isRootNodeSelected()) {
+			esv.showPopupError("Can not compress the root");
+			return;
+		}
+
+		if (!(selectedNode instanceof  FolderNode)) {
+			esv.showPopupError("Can not compress this element");
+			return;
+		}
+
+		String archiveName = esv.displayArchiveWindow1();
+		String extension = esv.displayArchiveWindow2();
+		int compressionLevel = esv.displayArchiveWindow3();
+
+		System.out.println(archiveName + extension + " : " + compressionLevel);
+
+		if (archiveName == null) {
+			esv.showPopupError("Can not create the archive : Invalid name");
+			return;
+		}
+		if (extension == null) {
+			esv.showPopupError("Can not create the archive : Invalid extension");
+			return;
+		}
+		if (compressionLevel == -1) {
+			esv.showPopupError("Can not create the archive : Invalid compression level");
+			return;
+		}
+
+		System.out.println("OK");
+		//TODO:: add compress node
 	}
 
 	@Override
@@ -177,41 +215,6 @@ public class GuiHandler implements ExplorerEventsHandler {
 //			}
 //		}
 	}
-
-	@Override
-	public void createArchiveEvent(Object selectedNode) {
-    	if (esv.isRootNodeSelected()) {
-    		esv.showPopupError("Can not compress the root");
-    		return;
-		}
-
-    	if (!(selectedNode instanceof  FolderNode)) {
-			esv.showPopupError("Can not compress this element");
-			return;
-		}
-
-    	String archiveName = esv.displayArchiveWindow1();
-		String extension = esv.displayArchiveWindow2();
-		int compressionLevel = esv.displayArchiveWindow3();
-
-		System.out.println(archiveName + extension + " : " + compressionLevel);
-
-		if (archiveName == null) {
-			esv.showPopupError("Can not create the archive : Invalid name");
-			return;
-		}
-		if (extension == null) {
-			esv.showPopupError("Can not create the archive : Invalid extension");
-			return;
-		}
-		if (compressionLevel == -1) {
-			esv.showPopupError("Can not create the archive : Invalid compression level");
-			return;
-		}
-
-		System.out.println("OK");
-		//TODO:: add compress node
-    }
 
 	@Override
 	public void doubleClickEvent(Object selectedNode) {

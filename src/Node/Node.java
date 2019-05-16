@@ -1,16 +1,17 @@
 package Node;
 
 import Factory.NodeFactory;
+import Visitor.Visitor;
 
 public class Node {
     private String name;
-    private FolderNode parent;
     private NodeFactory factory;
+    private FolderNode parent;
 
-    public Node(String name, FolderNode parent, NodeFactory factory) {
+    public Node(String name, NodeFactory factory) {
         this.name = name;
-        this.parent = parent;
         this.factory = factory;
+        this.parent = null;
     }
 
     public String getName() {
@@ -19,6 +20,10 @@ public class Node {
 
     public FolderNode getParent() {
         return this.parent;
+    }
+
+    public void setParent(FolderNode parent) {
+        this.parent = parent;
     }
 
     public NodeFactory getFactory () {
@@ -30,6 +35,10 @@ public class Node {
     }
 
     public Node getCopy() {
-        return this.factory.getNew(null);
+        return this.factory.getNew();
+    }
+
+    public void acceptVisitor(Visitor visitor){
+        visitor.visitNode(this);
     }
 }

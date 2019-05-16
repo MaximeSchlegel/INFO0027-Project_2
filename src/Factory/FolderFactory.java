@@ -12,12 +12,12 @@ public class FolderFactory implements NodeFactory {
         this.copyNumber = 0;
     }
 
-    public FolderNode getNew(FolderNode parent) {
+    public FolderNode getNew() {
         FolderNode newFolder;
         if (this.copyNumber == 0) {
-            newFolder = new FolderNode(this.folderName, parent, this);
+            newFolder = new FolderNode(this.folderName, this);
         } else {
-            newFolder = new FolderNode(this.folderName + "(copy_" + this.copyNumber + ")", parent, this);
+            newFolder = new FolderNode(this.folderName + "(copy_" + this.copyNumber + ")", this);
         }
 
         this.copyNumber++;

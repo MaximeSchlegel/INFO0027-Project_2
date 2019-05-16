@@ -3,11 +3,15 @@ package Factory;
 import Node.Node;
 import Node.ArchiveNode;
 import Node.FolderNode;
+import Visitor.Visitor;
+
+import java.util.ArrayList;
 
 
 public class ArchiveFactory implements NodeFactory {
-    private String fileName;
-    private String fileContent;
+    private String archiveName;
+    private ArrayList<String> archiveContent;
+    private int compressoinRate;
     private int copyNumber;
 
     public ArchiveFactory(Node target) {
@@ -15,7 +19,7 @@ public class ArchiveFactory implements NodeFactory {
     }
 
     @Override
-    public ArchiveNode getNew(FolderNode Parent) {
+    public ArchiveNode getNew() {
         return null;
     }
 }

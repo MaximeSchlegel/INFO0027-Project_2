@@ -4,5 +4,5 @@ import Node.Node;
 import Node.FolderNode;
 
 public interface NodeFactory {
-    Node getNew(FolderNode Parent);
+    Node getNew();
 }

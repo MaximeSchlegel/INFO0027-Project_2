@@ -1,13 +1,14 @@
 package Node;
 
 import Factory.NodeFactory;
+import Visitor.Visitor;
 
 
 public class AliasNode extends Node {
     private FileNode original;
 
     public AliasNode(FileNode original) {
-        super("File Alias", original.getParent(), null);
+        super("File Alias", null);
         this.original = original;
     }
 
@@ -47,5 +48,10 @@ public class AliasNode extends Node {
     @Override
     public Node getCopy() {
         return null;
+    }
+
+    @Override
+    public void acceptVisitor(Visitor visitor) {
+        visitor.visitAliasNode( this);
     }
 }
