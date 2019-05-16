@@ -1,3 +1,4 @@
+import Observer.EventSource;
 import montefiore.ulg.ac.be.graphics.NullHandlerException;
 
 public class Main {
@@ -8,7 +9,11 @@ public class Main {
         }
 
         try {
-            new GuiHandler(args);
+            EventSource eventSource = new EventSource();
+            eventSource.addObserver(event -> {
+                System.out.println("Received response: " + event);
+            });
+            new GuiHandler(args, eventSource);
         } catch (NullHandlerException e) {
             e.printStackTrace();
         }

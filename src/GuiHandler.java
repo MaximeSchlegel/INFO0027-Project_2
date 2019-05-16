@@ -3,6 +3,7 @@ import Factory.FolderFactory;
 import Node.AliasNode;
 import Node.FileNode;
 import Node.FolderNode;
+import Observer.EventSource;
 import montefiore.ulg.ac.be.graphics.*;
 
 import java.io.File;
@@ -10,10 +11,11 @@ import java.io.File;
 public class GuiHandler implements ExplorerEventsHandler {
 
 	private ExplorerSwingView esv;
+	private EventSource eventSource;
 	
-    GuiHandler(String[] args) throws NullHandlerException {
+    GuiHandler(String[] args, EventSource eventSource) throws NullHandlerException {
         this.esv = new ExplorerSwingView(this);
-        
+		this.eventSource = eventSource;
         try {
             this.esv.setRootNode(new FolderNode("Root", null, null));
 			this.esv.refreshTree();
@@ -51,6 +53,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newFile);
 		esv.refreshTree();
+		eventSource.scanUserIntraction("createFileEvent");
 	}
 
 	@Override
