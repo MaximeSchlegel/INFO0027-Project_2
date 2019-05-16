@@ -19,6 +19,9 @@ public class ArchiveFactory implements NodeFactory {
         this.compressoinRate = compressoinRate;
         this.archiveContent = visitor.getResult();
         this.copyNumber = 0;
+
+        System.out.println(this.archiveName + this.archiveExtension);
+        System.out.println(this.archiveContent);
     }
 
     @Override
@@ -26,13 +29,12 @@ public class ArchiveFactory implements NodeFactory {
         ArchiveNode newArchive;
 
         if (this.copyNumber == 0) {
-            newArchive = new ArchiveNode(this.archiveName, this.archiveExtension, this.compressoinRate, this.archiveContent, this);
+            newArchive =new ArchiveNode(this.archiveName, this.archiveExtension, this.compressoinRate, this.archiveContent, this);
         } else {
             newArchive = new ArchiveNode(this.archiveName + "(copy_" + this.copyNumber + ")", this.archiveExtension, this.compressoinRate, this.archiveContent, this);
         }
         this.copyNumber++;
 
         return newArchive;
-
     }
 }

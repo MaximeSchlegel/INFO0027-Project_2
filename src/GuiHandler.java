@@ -1,10 +1,5 @@
-import Factory.ArchiveFactory;
-import Factory.FileFactory;
-import Factory.FolderFactory;
-import Node.AliasNode;
-import Node.FileNode;
-import Node.FolderNode;
-import Node.Node;
+import Factory.*;
+import Node.*;
 import Observer.EventSource;
 import montefiore.ulg.ac.be.graphics.*;
 
@@ -135,7 +130,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		String extension = esv.displayArchiveWindow2();
 		int compressionLevel = esv.displayArchiveWindow3();
 
-		System.out.println(archiveName + extension + " : " + compressionLevel);
+		System.out.println("Hello  " + archiveName + extension + compressionLevel);
 
 		if (archiveName == null) {
 			esv.showPopupError("Can not create the archive : Invalid name");
@@ -150,11 +145,26 @@ public class GuiHandler implements ExplorerEventsHandler {
 			return;
 		}
 
-		ArchiveFactory factory = new ArchiveFactory()
+		FolderNode target = (FolderNode) selectedNode;
+		FolderNode parent = target.getParent();
 
-		//TODO:: add compress node
-        Node node = (Node)selectedNode;
-        eventSource.scanUserIntraction("createArchive " + node.getName());
+		ArchiveFactory factory = new ArchiveFactory(archiveName, extension, compressionLevel, target);
+		ArchiveNode newArchive = factory.getNew();
+		newArchive.setParent(parent);
+
+		try {
+			esv.addNodeToParentNode(newArchive);
+		} catch (NoSelectedNodeException e) {
+			e.printStackTrace();
+			return;
+		} catch (NoParentNodeException e) {
+			e.printStackTrace();
+			return;
+		}
+
+		parent.addChild(newArchive);
+		esv.refreshTree();
+        eventSource.scanUserIntraction("createArchive " + newArchive.toString());
 	}
 
 	@Override

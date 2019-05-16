@@ -25,5 +25,9 @@ public class FolderNode extends Node {
     @Override
     public void acceptVisitor(Visitor visitor) {
         visitor.visitFolderNode(this);
+        for (Node child: this.children) {
+            child.acceptVisitor(visitor);
+        }
+        visitor.exitCurrentFolder();
     }
 }

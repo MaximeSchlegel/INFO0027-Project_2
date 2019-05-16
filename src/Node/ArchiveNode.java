@@ -7,14 +7,13 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ArchiveNode extends Node{
-    private String name;
-    private String format;
+    private String extension;
     private int compressionRate;
     private String archiveContent;
 
-    public ArchiveNode (String name, String extendion, int compressionRate, String archiveContent, ArchiveFactory factory) {
+    public ArchiveNode (String name, String extension, int compressionRate, String archiveContent, ArchiveFactory factory) {
         super(name, factory);
-        this.compressionRate = compressionRate;
+        this.extension = extension;
         this.compressionRate = compressionRate;
         this.archiveContent = archiveContent;
     }
@@ -22,5 +21,10 @@ public class ArchiveNode extends Node{
     @Override
     public void acceptVisitor(Visitor visitor) {
         visitor.visitArchiveNode(this);
+    }
+
+    @Override
+    public String toString() {
+        return super.getName() + this.extension;
     }
 }
