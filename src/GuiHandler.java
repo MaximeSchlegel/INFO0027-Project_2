@@ -180,55 +180,6 @@ public class GuiHandler implements ExplorerEventsHandler {
 
 		System.out.println(selectedNode.getClass());
 
-//		if (selectedNode instanceof Node.FileNode) {
-//			Node.FileNode mFileNode = (Node.FileNode) selectedNode;
-//			Node.FolderNode mParent = mFileNode.getParent();
-//			try {
-//				Node.FileNode mFileNodeClone = (Node.FileNode) mFileNode.clone();
-//				esv.addNodeToParentNode(mFileNodeClone);
-//				mParent.addFileNode(mFileNodeClone);
-//				esv.refreshTree();
-//			} catch (NoSelectedNodeException e) {
-//				e.printStackTrace();
-//			} catch (NoParentNodeException e) {
-//				e.printStackTrace();
-//			} catch (CloneNotSupportedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//
-//		if(selectedNode instanceof Node.FolderNode){
-//			Node.FolderNode mFolderNode = (Node.FolderNode) selectedNode;
-//			try {
-//				Node.FolderNode mFolderNodeClone = (Node.FolderNode) mFolderNode.clone();
-//				Iterator<Node.FileNode> mFileNodes = mFolderNode.getmFileNodes().iterator();
-//				Iterator<Node.FolderNode> mFolderNodes = mFolderNode.getmFolderNodes().iterator();
-//				esv.addNodeToParentNode(mFolderNodeClone);
-//				while (mFileNodes.hasNext()){
-//					esv.addNodeToLastInsertedNode(mFileNodes.next(), 1);
-//				}
-//				while (mFolderNodes.hasNext()){
-//					Node.FolderNode tmpFolder = mFolderNodes.next();
-//					esv.addNodeToLastInsertedNode(tmpFolder, 1);
-//					System.out.println(tmpFolder.getmFileNodes().size());
-//					for (int i = 0; i < tmpFolder.getmFileNodes().size(); i++){
-//						Node.FileNode tmpFile = tmpFolder.getmFileNodes().get(i);
-//						esv.addNodeToLastInsertedNode(tmpFile, 2);
-//					}
-//				}
-//				esv.refreshTree();
-//			} catch (NoSelectedNodeException e) {
-//				e.printStackTrace();
-//			} catch (NoParentNodeException e) {
-//				e.printStackTrace();
-//			} catch (CloneNotSupportedException e) {
-//				e.printStackTrace();
-//			} catch (NoPreviousInsertedNodeException e) {
-//				e.printStackTrace();
-//			} catch (LevelException e) {
-//				e.printStackTrace();
-//			}
-//		}
         Node node = (Node)selectedNode;
         eventSource.scanUserIntraction("createCopy " + node.getName());
 	}

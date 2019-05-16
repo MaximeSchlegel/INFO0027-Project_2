@@ -18,6 +18,10 @@ public class ArchiveNode extends Node{
         this.archiveContent = archiveContent;
     }
 
+    public String getContent() {
+        return archiveContent;
+    }
+
     @Override
     public void acceptVisitor(Visitor visitor) {
         visitor.visitArchiveNode(this);
