@@ -1,3 +1,4 @@
+import Factory.ArchiveFactory;
 import Factory.FileFactory;
 import Factory.FolderFactory;
 import Node.AliasNode;
@@ -68,7 +69,6 @@ public class GuiHandler implements ExplorerEventsHandler {
 		FolderNode parent = (FolderNode) selectedNode;
 
 		String folderName = esv.folderMenuDialog();
-
 		if (folderName.isEmpty()) {
 			esv.showPopupError("Can not create a file without a name");
 			return;
@@ -126,7 +126,6 @@ public class GuiHandler implements ExplorerEventsHandler {
 			esv.showPopupError("Can not compress the root");
 			return;
 		}
-
 		if (!(selectedNode instanceof  FolderNode)) {
 			esv.showPopupError("Can not compress this element");
 			return;
@@ -151,7 +150,8 @@ public class GuiHandler implements ExplorerEventsHandler {
 			return;
 		}
 
-		System.out.println("OK");
+		ArchiveFactory factory = new ArchiveFactory()
+
 		//TODO:: add compress node
         Node node = (Node)selectedNode;
         eventSource.scanUserIntraction("createArchive " + node.getName());

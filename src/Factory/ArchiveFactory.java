@@ -1,25 +1,38 @@
 package Factory;
 
-import Node.Node;
 import Node.ArchiveNode;
 import Node.FolderNode;
-import Visitor.Visitor;
-
-import java.util.ArrayList;
-
+import Visitor.VisitorArchive;
 
 public class ArchiveFactory implements NodeFactory {
     private String archiveName;
-    private ArrayList<String> archiveContent;
+    private String archiveExtension;
     private int compressoinRate;
+    private String archiveContent;
     private int copyNumber;
 
-    public ArchiveFactory(Node target) {
-        return;
+    public ArchiveFactory(String name, String extension, int compressoinRate, FolderNode target) {
+        VisitorArchive visitor = new VisitorArchive(target);
+
+        this.archiveName = name;
+        this.archiveExtension = extension;
+        this.compressoinRate = compressoinRate;
+        this.archiveContent = visitor.getResult();
+        this.copyNumber = 0;
     }
 
     @Override
     public ArchiveNode getNew() {
-        return null;
+        ArchiveNode newArchive;
+
+        if (this.copyNumber == 0) {
+            newArchive = new ArchiveNode(this.archiveName, this.archiveExtension, this.compressoinRate, this.archiveContent, this);
+        } else {
+            newArchive = new ArchiveNode(this.archiveName + "(copy_" + this.copyNumber + ")", this.archiveExtension, this.compressoinRate, this.archiveContent, this);
+        }
+        this.copyNumber++;
+
+        return newArchive;
+
     }
 }

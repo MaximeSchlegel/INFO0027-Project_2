@@ -67,4 +67,8 @@ public class VistorCopy implements Visitor{
     public void exitCurrentFolder() {
         this.currentFolder = this.currentFolder.getParent();
     }
+
+    public Node getResult() {
+        return this.copiedNode;
+    }
 }

@@ -12,7 +12,7 @@ public class ArchiveNode extends Node{
     private int compressionRate;
     private String archiveContent;
 
-    public ArchiveNode (String name, int compressionRate, String archiveContent, ArchiveFactory factory) {
+    public ArchiveNode (String name, String extendion, int compressionRate, String archiveContent, ArchiveFactory factory) {
         super(name, factory);
         this.compressionRate = compressionRate;
         this.compressionRate = compressionRate;
