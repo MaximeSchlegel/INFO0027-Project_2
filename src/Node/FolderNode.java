@@ -14,7 +14,7 @@ public class FolderNode extends Node {
         this.children = new ArrayList<>();
     }
 
-    public ArrayList<Node> getChild() {
+    public ArrayList<Node> getChildren() {
         return this.children;
     }
 

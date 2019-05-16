@@ -1,18 +1,23 @@
+import Factory.ArchiveFactory;
 import Factory.*;
 import Node.*;
 import Observer.EventSource;
+import Visitor.*;
 import montefiore.ulg.ac.be.graphics.*;
 
 import java.io.File;
+
 
 public class GuiHandler implements ExplorerEventsHandler {
 
 	private ExplorerSwingView esv;
 	private EventSource eventSource;
+	private VisitorDisplay visitorDisplay;
 	
     GuiHandler(String[] args, EventSource eventSource) throws NullHandlerException {
         this.esv = new ExplorerSwingView(this);
 		this.eventSource = eventSource;
+		this.visitorDisplay = new VisitorDisplay(esv.getTextAreaManager());
         try {
             this.esv.setRootNode(new FolderNode("Root", null));
 			this.esv.refreshTree();
@@ -51,7 +56,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newFile);
 		esv.refreshTree();
-        eventSource.scanUserIntraction("createFile " + newFile.getName() + " in "+ parent.getName());
+        eventSource.scanUserIntraction("createFile " + newFile.toString() + " in "+ parent.toString());
 	}
 
 	@Override
@@ -81,7 +86,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newFolder);
 		esv.refreshTree();
-        eventSource.scanUserIntraction("createFolder " + newFolder.getName() + " in "+ parent.getName());
+        eventSource.scanUserIntraction("createFolder " + newFolder.toString() + " in "+ parent.toString());
 	}
 
 	@Override
@@ -112,7 +117,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newAlias);
 		esv.refreshTree();
-        eventSource.scanUserIntraction("createAlias " + newAlias.getName());
+        eventSource.scanUserIntraction("createAlias " + newAlias.toString());
 	}
 
 	@Override
@@ -129,8 +134,11 @@ public class GuiHandler implements ExplorerEventsHandler {
 		String archiveName = esv.displayArchiveWindow1();
 		String extension = esv.displayArchiveWindow2();
 		int compressionLevel = esv.displayArchiveWindow3();
+		FolderNode parent = (FolderNode) selectedNode;
+		FolderNode parentofparent = parent.getParent();
 
-		System.out.println("Hello  " + archiveName + extension + compressionLevel);
+
+		System.out.println(archiveName + extension + " : " + compressionLevel);
 
 		if (archiveName == null) {
 			esv.showPopupError("Can not create the archive : Invalid name");
@@ -144,27 +152,21 @@ public class GuiHandler implements ExplorerEventsHandler {
 			esv.showPopupError("Can not create the archive : Invalid compression level");
 			return;
 		}
-
-		FolderNode target = (FolderNode) selectedNode;
-		FolderNode parent = target.getParent();
-
-		ArchiveFactory factory = new ArchiveFactory(archiveName, extension, compressionLevel, target);
+		ArchiveFactory factory = new ArchiveFactory(archiveName, extension, compressionLevel, parentofparent);
 		ArchiveNode newArchive = factory.getNew();
-		newArchive.setParent(parent);
-
+		newArchive.setParent(parentofparent);
 		try {
 			esv.addNodeToParentNode(newArchive);
-		} catch (NoSelectedNodeException e) {
-			e.printStackTrace();
-			return;
 		} catch (NoParentNodeException e) {
 			e.printStackTrace();
 			return;
+		} catch (NoSelectedNodeException e) {
+			e.printStackTrace();
 		}
-
-		parent.addChild(newArchive);
+		parentofparent.addChild(newArchive);
 		esv.refreshTree();
-        eventSource.scanUserIntraction("createArchive " + newArchive.toString());
+        Node node = (Node)selectedNode;
+        eventSource.scanUserIntraction("createArchive " + node.toString());
 	}
 
 	@Override
@@ -178,17 +180,42 @@ public class GuiHandler implements ExplorerEventsHandler {
 			return;
 		}
 
-		System.out.println(selectedNode.getClass());
-
-        Node node = (Node)selectedNode;
-        eventSource.scanUserIntraction("createCopy " + node.getName());
+//		System.out.println(selectedNode.getClass());
+//		VisitorCopy visitorCopy = new VisitorCopy((Node)selectedNode);
+//		visitorCopy.visitFileNode((FileNode)selectedNode);
+//		FileNode newFile = (FileNode)visitorCopy.getResult();
+////		FolderNode parent = newFile.getParent();
+////		FolderNode parentofparent = parent.getParent();
+//
+//		try {
+//			esv.addNodeToSelectedNode(newFile);
+//			esv.addNodeToParentNode(visitorCopy.getCurrentFolder());
+//		} catch (NoSelectedNodeException e) {
+//			e.printStackTrace();
+//		} catch (NoParentNodeException e) {
+//			e.printStackTrace();
+//		}
+		Node node = (Node)selectedNode;
+        eventSource.scanUserIntraction("createCopy " + node.toString());
 	}
 
 	@Override
 	public void doubleClickEvent(Object selectedNode) {
 		// TODO Auto-generated method stub
         Node node = (Node)selectedNode;
-        eventSource.scanUserIntraction("Display " + node.getName());
+        if(selectedNode instanceof FileNode){
+            this.visitorDisplay.visitFileNode((FileNode)selectedNode);
+        }else if(selectedNode instanceof AliasNode){
+			this.visitorDisplay.visitAliasNode((AliasNode)selectedNode);
+		}
+		else if(selectedNode instanceof FolderNode){
+			this.visitorDisplay.visitFolderNode((FolderNode)selectedNode);
+		}
+		else if(selectedNode instanceof ArchiveNode){
+			this.visitorDisplay.visitArchiveNode((ArchiveNode)selectedNode);
+		}
+        eventSource.scanUserIntraction("Display " + node.toString());
+
 	}
 
 	@Override

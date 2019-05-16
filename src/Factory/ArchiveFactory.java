@@ -2,7 +2,9 @@ package Factory;
 
 import Node.ArchiveNode;
 import Node.FolderNode;
+import Visitor.Visitor;
 import Visitor.VisitorArchive;
+import Visitor.VisitorCopy;
 
 public class ArchiveFactory implements NodeFactory {
     private String archiveName;
@@ -13,6 +15,7 @@ public class ArchiveFactory implements NodeFactory {
 
     public ArchiveFactory(String name, String extension, int compressionRate, FolderNode target) {
         VisitorArchive visitor = new VisitorArchive(target);
+//        VisitorArchive visitor = new VisitorArchive(target);
 
         this.archiveName = name;
         this.archiveExtension = extension;

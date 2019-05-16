@@ -2,6 +2,7 @@ package Factory;
 
 import Node.FolderNode;
 import Node.FileNode;
+import Visitor.VisitorCopy;
 
 
 public class FileFactory implements NodeFactory {
@@ -10,6 +11,7 @@ public class FileFactory implements NodeFactory {
     private int copyNumber;
 
     public FileFactory(String fileName, String fileContent) {
+//        new VisitorCopy(target);
         this.fileName = fileName;
         this.fileContent = fileContent;
         this.copyNumber = 0;

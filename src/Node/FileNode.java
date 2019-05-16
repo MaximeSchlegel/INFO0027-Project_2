@@ -12,7 +12,10 @@ public class FileNode extends Node {
     }
 
     public String getContent() {
-        return this.content;
+        if(this.content.isEmpty())
+            return "Content Is Empty";
+        else
+            return this.content;
     }
 
     @Override

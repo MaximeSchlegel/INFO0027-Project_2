@@ -3,14 +3,14 @@ package Visitor;
 import Node.*;
 
 
-public class VistorCopy implements Visitor{
+public class VisitorCopy implements Visitor{
     private Node copiedNode;
     private FolderNode currentFolder;
 
-    public VistorCopy(Node target) {
+    public VisitorCopy(Node target) {
         this.currentFolder = null;
         target.acceptVisitor(this);
-    };
+    }
 
     @Override
     public void visitAliasNode(AliasNode node) {
@@ -35,8 +35,8 @@ public class VistorCopy implements Visitor{
         FileNode copiedFile = (FileNode) node.getCopy();
 
         if (this.currentFolder == null) {
-            copiedNode.setParent(node.getParent());
-            this.copiedNode = copiedNode;
+            copiedFile.setParent(node.getParent());
+            this.copiedNode = copiedFile;
         } else {
             copiedFile.setParent(this.currentFolder);
             this.currentFolder.addChild(copiedNode);
@@ -70,5 +70,9 @@ public class VistorCopy implements Visitor{
 
     public Node getResult() {
         return this.copiedNode;
+    }
+
+    public FolderNode getCurrentFolder() {
+        return currentFolder;
     }
 }
