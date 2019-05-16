@@ -1,6 +1,10 @@
 import Observer.EventSource;
 import montefiore.ulg.ac.be.graphics.NullHandlerException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
 public class Main {
     public static void main(String[] args) {
         if (args.length > 1) {
@@ -10,9 +14,25 @@ public class Main {
 
         try {
             EventSource eventSource = new EventSource();
-            eventSource.addObserver(event -> {
-                System.out.println("Received response: " + event);
-            });
+            if(args.length  == 0){
+                eventSource.addObserver(event -> {
+                    System.out.println("Received response: " + event);
+                });
+            }
+            else{
+                PrintWriter writer1 =null;
+                try {
+                    writer1 = new PrintWriter(new File("./log.txt"));
+                    PrintWriter finalWriter = writer1;
+                    eventSource.addObserver(event -> {
+                        finalWriter.write("Received response: " + event + "\n");
+                        finalWriter.flush();
+                    });
+                }catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
             new GuiHandler(args, eventSource);
         } catch (NullHandlerException e) {
             e.printStackTrace();

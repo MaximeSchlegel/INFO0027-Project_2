@@ -3,6 +3,7 @@ import Factory.FolderFactory;
 import Node.AliasNode;
 import Node.FileNode;
 import Node.FolderNode;
+import Node.Node;
 import Observer.EventSource;
 import montefiore.ulg.ac.be.graphics.*;
 
@@ -54,7 +55,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newFile);
 		esv.refreshTree();
-		eventSource.scanUserIntraction("createFileEvent");
+        eventSource.scanUserIntraction("createFile " + newFile.getName() + " in "+ parent.getName());
 	}
 
 	@Override
@@ -85,6 +86,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newFolder);
 		esv.refreshTree();
+        eventSource.scanUserIntraction("createFolder " + newFolder.getName() + " in "+ parent.getName());
 	}
 
 	@Override
@@ -115,6 +117,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newAlias);
 		esv.refreshTree();
+        eventSource.scanUserIntraction("createAlias " + newAlias.getName());
 	}
 
 	@Override
@@ -150,6 +153,8 @@ public class GuiHandler implements ExplorerEventsHandler {
 
 		System.out.println("OK");
 		//TODO:: add compress node
+        Node node = (Node)selectedNode;
+        eventSource.scanUserIntraction("createArchive " + node.getName());
 	}
 
 	@Override
@@ -214,15 +219,20 @@ public class GuiHandler implements ExplorerEventsHandler {
 //				e.printStackTrace();
 //			}
 //		}
+        Node node = (Node)selectedNode;
+        eventSource.scanUserIntraction("createCopy " + node.getName());
 	}
 
 	@Override
 	public void doubleClickEvent(Object selectedNode) {
 		// TODO Auto-generated method stub
+        Node node = (Node)selectedNode;
+        eventSource.scanUserIntraction("Display " + node.getName());
 	}
 
 	@Override
 	public void eventExit() {
 		// TODO Auto-generated method stub
+        eventSource.scanUserIntraction("eventExit ");
 	}
 }
