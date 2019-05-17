@@ -1,15 +1,9 @@
-package Node;
-
-import Factory.FolderFactory;
-import Factory.NodeFactory;
-import Visitor.Visitor;
-
 import java.util.ArrayList;
 
-public class FolderNode extends Node {
+public class NodeFolder extends Node {
     private ArrayList<Node> children;
 
-    public FolderNode(String name, FolderFactory factory) {
+    public NodeFolder(String name, FactoryNodeFolder factory) {
         super(name, factory);
         this.children = new ArrayList<>();
     }

@@ -1,17 +1,9 @@
-package Node;
-
-import Factory.ArchiveFactory;
-import Visitor.Visitor;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
-public class ArchiveNode extends Node{
+public class NodeArchive extends Node{
     private String extension;
     private int compressionRate;
     private String archiveContent;
 
-    public ArchiveNode (String name, String extension, int compressionRate, String archiveContent, ArchiveFactory factory) {
+    public NodeArchive(String name, String extension, int compressionRate, String archiveContent, FactoryNodeArchive factory) {
         super(name, factory);
         this.extension = extension;
         this.compressionRate = compressionRate;
@@ -19,7 +11,7 @@ public class ArchiveNode extends Node{
     }
 
     public String getContent() {
-        return archiveContent;
+        return this.archiveContent;
     }
 
     @Override

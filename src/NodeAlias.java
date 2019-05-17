@@ -1,13 +1,7 @@
-package Node;
+public class NodeAlias extends Node {
+    private NodeFile original;
 
-import Factory.NodeFactory;
-import Visitor.Visitor;
-
-
-public class AliasNode extends Node {
-    private FileNode original;
-
-    public AliasNode(FileNode original) {
+    public NodeAlias(NodeFile original) {
         super("File Alias", null);
         this.original = original;
     }
@@ -22,13 +16,13 @@ public class AliasNode extends Node {
     }
 
     @Override
-    public FolderNode getParent() {
+    public NodeFolder getParent() {
         return super.getParent();
     }
 
     @Override
-    public NodeFactory getFactory() {
-        NodeFactory factory = this.original.getFactory();
+    public FactoryNode getFactory() {
+        FactoryNode factory = this.original.getFactory();
         return this.original.getFactory();
     }
 

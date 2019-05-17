@@ -1,9 +1,4 @@
-import Observer.EventSource;
 import montefiore.ulg.ac.be.graphics.NullHandlerException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,14 +1,9 @@
-package Node;
-
-import Factory.NodeFactory;
-import Visitor.Visitor;
-
 public class Node {
     private String name;
-    private NodeFactory factory;
-    private FolderNode parent;
+    private FactoryNode factory;
+    private NodeFolder parent;
 
-    public Node(String name, NodeFactory factory) {
+    public Node(String name, FactoryNode factory) {
         this.name = name;
         this.factory = factory;
         this.parent = null;
@@ -18,15 +13,15 @@ public class Node {
         return this.name;
     }
 
-    public FolderNode getParent() {
+    public NodeFolder getParent() {
         return this.parent;
     }
 
-    public void setParent(FolderNode parent) {
+    public void setParent(NodeFolder parent) {
         this.parent = parent;
     }
 
-    public NodeFactory getFactory () {
+    public FactoryNode getFactory () {
         return this.factory;
     }
 

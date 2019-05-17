@@ -1,54 +1,50 @@
-package Visitor;
-
-import Node.*;
-
 public class VisitorArchive implements Visitor {
     private StringBuilder content;
     private int current_indent;
 
-    public VisitorArchive(FolderNode target) {
+    public VisitorArchive(NodeFolder target) {
         this.content = new StringBuilder();
         this.current_indent = 0;
         target.acceptVisitor(this);
     }
 
     @Override
-    public void visitAliasNode(AliasNode node) {
-        for (int i = 0; i < this.current_indent; i++) {
-            this.content.append("  ");
-        }
-        this.content.append("- ");
-        this.content.append(node.getName());
-        this.content.append("\n");
-    }
-
-    @Override
-    public void visitFileNode(FileNode node) {
+    public void visitAliasNode(NodeAlias node) {
         for (int i = 0; i < this.current_indent; i++) {
             this.content.append("   ");
         }
         this.content.append("- ");
-        this.content.append(node.getName());
+        this.content.append(node.toString());
         this.content.append("\n");
     }
 
     @Override
-    public void visitArchiveNode(ArchiveNode node) {
+    public void visitFileNode(NodeFile node) {
         for (int i = 0; i < this.current_indent; i++) {
-            this.content.append("  ");
+            this.content.append("   ");
         }
         this.content.append("- ");
-        this.content.append(node.getName());
+        this.content.append(node.toString());
         this.content.append("\n");
     }
 
     @Override
-    public void visitFolderNode(FolderNode node) {
+    public void visitArchiveNode(NodeArchive node) {
         for (int i = 0; i < this.current_indent; i++) {
-            this.content.append("  ");
+            this.content.append("   ");
+        }
+        this.content.append("- ");
+        this.content.append(node.toString());
+        this.content.append("\n");
+    }
+
+    @Override
+    public void visitFolderNode(NodeFolder node) {
+        for (int i = 0; i < this.current_indent; i++) {
+            this.content.append("   ");
         }
         this.content.append("+ ");
-        this.content.append(node.getName());
+        this.content.append(node.toString());
         this.content.append("\n");
         this.current_indent++;
     }
@@ -56,9 +52,9 @@ public class VisitorArchive implements Visitor {
     @Override
     public void visitNode(Node node) {
         for (int i = 0; i < this.current_indent; i++) {
-            this.content.append("  ");
+            this.content.append("   ");
         }
-        this.content.append(node.getName());
+        this.content.append(node.toString());
         this.content.append("\n");
     }
 
