@@ -11,7 +11,6 @@ public class FileFactory implements NodeFactory {
     private int copyNumber;
 
     public FileFactory(String fileName, String fileContent) {
-//        new VisitorCopy(target);
         this.fileName = fileName;
         this.fileContent = fileContent;
         this.copyNumber = 0;

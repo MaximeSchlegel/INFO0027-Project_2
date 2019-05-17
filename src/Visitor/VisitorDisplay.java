@@ -3,50 +3,50 @@ package Visitor;
 import Node.*;
 import montefiore.ulg.ac.be.graphics.TextAreaManager;
 
-import java.util.Iterator;
 
 public class VisitorDisplay implements Visitor{
     private TextAreaManager mDisplayAreaManager;
+    private Object target;
+    private int current_indent;
 
-    public VisitorDisplay(TextAreaManager mDisplayAreaManager){
+    public VisitorDisplay(TextAreaManager mDisplayAreaManager, Object target){
         this.mDisplayAreaManager = mDisplayAreaManager;
+        this.target = target;
+        this.current_indent = 0;
+        ((Node)this.target).acceptVisitor(this);
     }
 
     @Override
     public void visitArchiveNode(ArchiveNode node) {
-        this.mDisplayAreaManager.clearAllText();
         this.mDisplayAreaManager.appendText(node.getContent() + "\n");
 
     }
 
     @Override
     public void visitFileNode(FileNode node) {
-        this.mDisplayAreaManager.clearAllText();
-        this.mDisplayAreaManager.appendText(node.getContent());
+        if(this.target instanceof FolderNode){
+            for (int i = 0; i < this.current_indent; i++) {
+                this.mDisplayAreaManager.appendText("  ");
+            }
+            this.mDisplayAreaManager.appendText("-" + node.getName() + "\n");
+        }
+        else{
+            this.mDisplayAreaManager.appendText(node.getContent());
+        }
     }
 
     @Override
     public void visitFolderNode(FolderNode node) {
-        this.mDisplayAreaManager.clearAllText();
-        iterateAllFoldersTree(node);
-    }
-
-    public void iterateAllFoldersTree(Node node){
-        Iterator<Node> iter;
-        mDisplayAreaManager.appendText(node.toString() + "\n");
-        if(node instanceof FolderNode){
-            iter = ((FolderNode) node).getChildren().iterator();
-            while (iter.hasNext()){
-                Node nodeIter = iter.next();
-                iterateAllFoldersTree(nodeIter);
-            }
+        for (int i = 0; i < this.current_indent; i++) {
+            this.mDisplayAreaManager.appendText("  ");
         }
-
+        this.mDisplayAreaManager.appendText("+" + node.getName() + "\n");
+        this.current_indent++;
     }
+
 
     @Override
     public void visitAliasNode(AliasNode node) {
-        this.mDisplayAreaManager.clearAllText();
         this.mDisplayAreaManager.appendText(node.getContent());
     }
 
@@ -57,6 +57,6 @@ public class VisitorDisplay implements Visitor{
 
     @Override
     public void exitCurrentFolder() {
-        return;
+        this.current_indent--;
     }
 }

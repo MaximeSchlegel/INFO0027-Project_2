@@ -26,7 +26,7 @@ public class EventSource {
         observers.add(observer);
     }
 
-    public void scanUserIntraction(String interaction){
+    public void scanUserInteraction(String interaction){
         notifyObservers(interaction);
     }
 

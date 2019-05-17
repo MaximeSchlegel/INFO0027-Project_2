@@ -12,39 +12,16 @@ public class Main {
             System.exit(1);
         }
 
-        EventSource eventSource = new EventSource();
-
-        if(args.length  == 0){
-            eventSource.addObserver(
-                    event -> {
-                        System.out.println(event);
-                    });
-        } else {
-            PrintWriter writer = null;
-
-            try {
-                writer = new PrintWriter(new File("./log.txt"));
-                PrintWriter finalWriter = writer;
-
-                eventSource.addObserver(
-                        event -> {
-                            finalWriter.write( event + "\n");
-                            finalWriter.flush();
-                        });
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return;
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-        }
         try {
-            new GuiHandler(args, eventSource);
+            new GuiHandler(args);
         } catch (NullHandlerException e) {
             e.printStackTrace();
         }
+
+
+//        writer.close();
+
+
+
     }
 }

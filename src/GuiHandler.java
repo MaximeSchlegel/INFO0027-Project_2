@@ -6,18 +6,35 @@ import Visitor.*;
 import montefiore.ulg.ac.be.graphics.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 
 public class GuiHandler implements ExplorerEventsHandler {
 
 	private ExplorerSwingView esv;
 	private EventSource eventSource;
-	private VisitorDisplay visitorDisplay;
+	private PrintWriter writer = null;
+
 	
-    GuiHandler(String[] args, EventSource eventSource) throws NullHandlerException {
+    GuiHandler(String[] args) throws NullHandlerException {
         this.esv = new ExplorerSwingView(this);
-		this.eventSource = eventSource;
-		this.visitorDisplay = new VisitorDisplay(esv.getTextAreaManager());
+		this.eventSource = new EventSource();
+		if(args.length == 0){
+			this.eventSource.addObserver(event -> {System.out.println(event);});
+		}else{
+			try {
+				this.writer = new PrintWriter(new File("./log.txt"));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+
+			this.eventSource.addObserver(event -> {
+				writer.write(event + "\n");
+				writer.flush();
+			});
+		}
+
         try {
             this.esv.setRootNode(new FolderNode("Root", null));
 			this.esv.refreshTree();
@@ -56,7 +73,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newFile);
 		esv.refreshTree();
-        eventSource.scanUserIntraction("createFile " + newFile.toString() + " in "+ parent.toString());
+        eventSource.scanUserInteraction("createFile " + newFile.toString() + " in "+ parent.toString());
 	}
 
 	@Override
@@ -86,7 +103,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newFolder);
 		esv.refreshTree();
-        eventSource.scanUserIntraction("createFolder " + newFolder.toString() + " in "+ parent.toString());
+        eventSource.scanUserInteraction("createFolder " + newFolder.toString() + " in "+ parent.toString());
 	}
 
 	@Override
@@ -117,7 +134,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		}
 		parent.addChild(newAlias);
 		esv.refreshTree();
-        eventSource.scanUserIntraction("createAlias " + newAlias.toString());
+        eventSource.scanUserInteraction("createAlias " + newAlias.toString());
 	}
 
 	@Override
@@ -166,7 +183,7 @@ public class GuiHandler implements ExplorerEventsHandler {
 		parentofparent.addChild(newArchive);
 		esv.refreshTree();
         Node node = (Node)selectedNode;
-        eventSource.scanUserIntraction("createArchive " + node.toString());
+        eventSource.scanUserInteraction("createArchive " + node.toString());
 	}
 
 	@Override
@@ -180,47 +197,49 @@ public class GuiHandler implements ExplorerEventsHandler {
 			return;
 		}
 
-//		System.out.println(selectedNode.getClass());
-//		VisitorCopy visitorCopy = new VisitorCopy((Node)selectedNode);
-//		visitorCopy.visitFileNode((FileNode)selectedNode);
-//		FileNode newFile = (FileNode)visitorCopy.getResult();
-////		FolderNode parent = newFile.getParent();
-////		FolderNode parentofparent = parent.getParent();
-//
-//		try {
-//			esv.addNodeToSelectedNode(newFile);
-//			esv.addNodeToParentNode(visitorCopy.getCurrentFolder());
-//		} catch (NoSelectedNodeException e) {
-//			e.printStackTrace();
-//		} catch (NoParentNodeException e) {
-//			e.printStackTrace();
-//		}
+		Node nodeToBeCopied = (Node)selectedNode;
+		FolderNode parent = nodeToBeCopied.getParent();
+		VisitorCopy visitorCopy = new VisitorCopy(nodeToBeCopied, this.esv);
+		visitorCopy.visitNode((Node)selectedNode);
+
+		Node nodeCopied = visitorCopy.getResult();
+		parent.addChild(nodeCopied);
+
+		esv.refreshTree();
+
 		Node node = (Node)selectedNode;
-        eventSource.scanUserIntraction("createCopy " + node.toString());
+        eventSource.scanUserInteraction("createCopy " + node.toString());
 	}
 
 	@Override
 	public void doubleClickEvent(Object selectedNode) {
 		// TODO Auto-generated method stub
+		esv.getTextAreaManager().clearAllText();
+		new VisitorDisplay(esv.getTextAreaManager(), selectedNode);
         Node node = (Node)selectedNode;
-        if(selectedNode instanceof FileNode){
-            this.visitorDisplay.visitFileNode((FileNode)selectedNode);
-        }else if(selectedNode instanceof AliasNode){
-			this.visitorDisplay.visitAliasNode((AliasNode)selectedNode);
-		}
-		else if(selectedNode instanceof FolderNode){
-			this.visitorDisplay.visitFolderNode((FolderNode)selectedNode);
-		}
-		else if(selectedNode instanceof ArchiveNode){
-			this.visitorDisplay.visitArchiveNode((ArchiveNode)selectedNode);
-		}
-        eventSource.scanUserIntraction("Display " + node.toString());
+		eventSource.scanUserInteraction("Display " + node.toString());
+
+//		VisitorDisplay visitorDisplay = new VisitorDisplay(esv.getTextAreaManager(), node);
+//        if(selectedNode instanceof FileNode){
+//            this.visitorDisplay.visitFileNode((FileNode)selectedNode);
+//        }else if(selectedNode instanceof AliasNode){
+//			this.visitorDisplay.visitAliasNode((AliasNode)selectedNode);
+//		}
+//		else if(selectedNode instanceof FolderNode){
+//			this.visitorDisplay.visitFolderNode((FolderNode)selectedNode);
+//		}
+//		else if(selectedNode instanceof ArchiveNode){
+//			this.visitorDisplay.visitArchiveNode((ArchiveNode)selectedNode);
+//		}
+
 
 	}
 
 	@Override
 	public void eventExit() {
 		// TODO Auto-generated method stub
-        eventSource.scanUserIntraction("eventExit ");
+        eventSource.scanUserInteraction("eventExit ");
+        if(writer != null)
+			writer.close();// close the PrintWriter
 	}
 }
